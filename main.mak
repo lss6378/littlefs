@@ -10,7 +10,14 @@ flag: -Wall, -O2, -g
 ; 手动指定临时文件夹，emake 会将生成的 .o 文件放在这个文件夹中
 int: objs
 
+; 额外头文件路径
+inc: .
+inc: ./bd
+
 ; 加入源文件
 # src: foo.c
 # src: bar.c
 src: main.c
+src: lfs.c
+src: lfs_util.c
+src: bd/lfs_filebd.c

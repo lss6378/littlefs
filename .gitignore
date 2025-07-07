@@ -34,3 +34,5 @@ scripts/__pycache__
 tests/*.toml.*
 /objs
 /*.exe
+/.vscode
+/*.img
