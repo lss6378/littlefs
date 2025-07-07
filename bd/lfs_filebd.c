@@ -45,6 +45,8 @@ int lfs_filebd_create(const struct lfs_config *cfg, const char *path,
         return err;
     }
 
+    // 预分配镜像文件大小，确保一开始就是完整容量
+    ftruncate(bd->fd, (off_t)bd->cfg->erase_size * bdcfg->erase_count);
     LFS_FILEBD_TRACE("lfs_filebd_create -> %d", 0);
     return 0;
 }
