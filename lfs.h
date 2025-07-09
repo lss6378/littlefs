@@ -286,7 +286,7 @@ struct lfs_config {
 #ifdef LFS_MULTIVERSION
     // On-disk version to use when writing in the form of 16-bit major version
     // + 16-bit minor version. This limiting metadata to what is supported by
-    // older minor versions. Note that some features will be lost. Defaults to 
+    // older minor versions. Note that some features will be lost. Defaults to
     // to the most recent minor version when zero.
     uint32_t disk_version;
 #endif
@@ -464,9 +464,6 @@ typedef struct lfs {
     lfs_size_t attr_max;
     lfs_size_t inline_max;
 
-#ifdef LFS_MIGRATE
-    struct lfs1 *lfs1;
-#endif
 } lfs_t;
 
 
@@ -774,23 +771,6 @@ int lfs_fs_gc(lfs_t *lfs);
 //
 // Returns a negative error code on failure.
 int lfs_fs_grow(lfs_t *lfs, lfs_size_t block_count);
-#endif
-
-#ifndef LFS_READONLY
-#ifdef LFS_MIGRATE
-// Attempts to migrate a previous version of littlefs
-//
-// Behaves similarly to the lfs_format function. Attempts to mount
-// the previous version of littlefs and update the filesystem so it can be
-// mounted with the current version of littlefs.
-//
-// Requires a littlefs object and config struct. This clobbers the littlefs
-// object, and does not leave the filesystem mounted. The config struct must
-// be zeroed for defaults and backwards compatibility.
-//
-// Returns a negative error code on failure.
-int lfs_migrate(lfs_t *lfs, const struct lfs_config *cfg);
-#endif
 #endif
 
 
