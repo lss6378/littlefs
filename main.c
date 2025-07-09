@@ -3,10 +3,11 @@
 // #include "lfs_util.h"
 #include "bd/lfs_filebd.h"
 
-// int main() {
-//     printf("Hello, World!\n");
-//     return 0;
-// }
+
+
+#define FILE_PATH "lfs.img"
+#define BLOCK_SIZE  128
+#define BLOCK_COUNT 2
 
 // variables used by the filesystem
 lfs_t lfs;
@@ -17,8 +18,8 @@ lfs_filebd_t bd;
 const struct lfs_filebd_config filebd_cfg = {
     .read_size   = 16,
     .prog_size   = 16,
-    .erase_size  = 4096,
-    .erase_count = 128,
+    .erase_size  = BLOCK_SIZE,
+    .erase_count = BLOCK_COUNT,
 };
 
 // configuration of the filesystem is provided by this struct
@@ -33,9 +34,9 @@ const struct lfs_config cfg = {
     // block device configuration
     .read_size = 16,
     .prog_size = 16,
-    .block_size = 4096,
-    .block_count = 128,
-    .cache_size = 16,   
+    .block_size = BLOCK_SIZE,
+    .block_count = BLOCK_COUNT,
+    .cache_size = 16,
     .lookahead_size = 16,
     .block_cycles = 500,
 };
@@ -43,7 +44,7 @@ const struct lfs_config cfg = {
 // entry point
 int main(void) {
     // create underlying file block device
-    int err = lfs_filebd_create(&cfg, "lfs.img", &filebd_cfg);
+    int err = lfs_filebd_create(&cfg, FILE_PATH, &filebd_cfg);
     if (err) {
         printf("filebd create failed: %d\n", err);
         return err;
@@ -55,6 +56,7 @@ int main(void) {
     // reformat if we can't mount the filesystem
     // this should only happen on the first boot
     if (err) {
+        printf("lfs mount failed: %d\n", err);
         lfs_format(&lfs, &cfg);
         lfs_mount(&lfs, &cfg);
     }
