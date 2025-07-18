@@ -6,7 +6,7 @@
 
 
 #define FILE_PATH "lfs.img"
-#define BLOCK_SIZE  128
+#define BLOCK_SIZE  4096
 #define BLOCK_COUNT 2
 
 // variables used by the filesystem
@@ -16,8 +16,8 @@ lfs_file_t file;
 // file-backed block device
 lfs_filebd_t bd;
 const struct lfs_filebd_config filebd_cfg = {
-    .read_size   = 16,
-    .prog_size   = 16,
+    .read_size   = 256,
+    .prog_size   = 256,
     .erase_size  = BLOCK_SIZE,
     .erase_count = BLOCK_COUNT,
 };
@@ -32,12 +32,12 @@ const struct lfs_config cfg = {
     .sync  = lfs_filebd_sync,
 
     // block device configuration
-    .read_size = 16,
-    .prog_size = 16,
+    .read_size = 256,
+    .prog_size = 256,
     .block_size = BLOCK_SIZE,
     .block_count = BLOCK_COUNT,
-    .cache_size = 16,
-    .lookahead_size = 16,
+    .cache_size = 256,
+    .lookahead_size = 8,
     .block_cycles = 500,
 };
 
@@ -57,8 +57,17 @@ int main(void) {
     // this should only happen on the first boot
     if (err) {
         printf("lfs mount failed: %d\n", err);
-        lfs_format(&lfs, &cfg);
-        lfs_mount(&lfs, &cfg);
+
+        err = lfs_format(&lfs, &cfg);
+        if (err) {
+            printf("lfs format failed: %d\n", err);
+            return err;
+        }
+        err = lfs_mount(&lfs, &cfg);
+        if (err) {
+            printf("lfs mount failed: %d\n", err);
+            return err;
+        }
     }
 
     // read current count
